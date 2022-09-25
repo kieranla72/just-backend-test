@@ -1,10 +1,16 @@
-import { NextFunction, Request, Response } from 'express';
-import { TripsAdapter } from '../adapters/trips.adapter';
+import { NextFunction, Request, Response, Router } from 'express';
 import { ITrip, ITripInput, ITripInsert } from '../services/ports';
-import { TripService } from '../services/trips.service';
-import { initializeClass } from '../utils/classSingleton';
+import { initializeTripService, TripService } from '../services/trips.service';
+import bodyParser from 'body-parser';
+import { initializeTripsAdapter } from '../adapters/trips.adapter';
+import { initializePolicyAdapter } from '../adapters/policy.adapter';
+import { initializeNotificationsAdapter } from '../adapters/notifications.adapter';
 
-export const getAllUserTrips = async (
+const tripsRouter: Router = Router();
+
+tripsRouter.use(bodyParser.text({ type: '*/*' }));
+
+const getAllUserTrips = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -12,12 +18,11 @@ export const getAllUserTrips = async (
   try {
     const userId: string = req.params.userId;
 
-    const tripService: TripService = initializeClass();
-    const tripsAdapter: TripsAdapter = new TripsAdapter();
+    const tripService: TripService = initializeTripService();
 
     const trips: ITrip[] = await tripService.getAllUserTrips(
-      userId,
-      tripsAdapter,
+      Number(userId),
+      initializeTripsAdapter(),
     );
 
     res.status(200).send(trips);
@@ -26,7 +31,7 @@ export const getAllUserTrips = async (
   }
 };
 
-export const createUserTrip = async (
+const createUserTrip = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -34,12 +39,15 @@ export const createUserTrip = async (
   try {
     const tripInput: ITripInput = JSON.parse(req.body);
 
-    const tripService: TripService = initializeClass();
-    const tripsAdapter: TripsAdapter = new TripsAdapter();
+    console.log(process.env.POLICY_URL);
+
+    const tripService: TripService = initializeTripService();
 
     const tripReturn: ITripInsert = await tripService.createUserTrip(
       tripInput,
-      tripsAdapter,
+      initializeTripsAdapter(),
+      initializePolicyAdapter(),
+      initializeNotificationsAdapter(),
     );
 
     res.status(200).send(tripReturn);
@@ -47,3 +55,8 @@ export const createUserTrip = async (
     next(err);
   }
 };
+
+tripsRouter.get('/users/:userId/trips', getAllUserTrips);
+tripsRouter.get('/trips', createUserTrip);
+
+export default tripsRouter;

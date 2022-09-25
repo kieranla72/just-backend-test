@@ -1,9 +1,11 @@
+import { PolicyAdapter } from '../adapters/policy.adapter';
+import { NotificationsAdapter } from '../adapters/notifications.adapter';
 import { TripsAdapter } from '../adapters/trips.adapter';
 import { ITrip, ITripInput, ITripInsert } from './ports';
 
 export class TripService {
   async getAllUserTrips(
-    userId: string,
+    userId: number,
     tripsAdapter: TripsAdapter,
   ): Promise<ITrip[]> {
     const userTrips: ITrip[] = await tripsAdapter.getAllUserTrips(userId);
@@ -14,8 +16,19 @@ export class TripService {
   async createUserTrip(
     tripInput: ITripInput,
     tripsAdapter: TripsAdapter,
+    policyAdapter: PolicyAdapter,
+    notificationsAdapter: NotificationsAdapter,
   ): Promise<ITripInsert> {
-    const pricePerMile: number = await tripsAdapter.getTripPricePerMile();
+    const lastTrip: ITripInsert = await this.checkIfRepeatedTrip(
+      tripInput,
+      tripsAdapter,
+    );
+
+    if (lastTrip) {
+      return lastTrip;
+    }
+
+    const pricePerMile: number = await policyAdapter.getTripPricePerMile();
 
     const tripInsert: ITripInsert = this.buildTripInserts(
       tripInput,
@@ -24,9 +37,24 @@ export class TripService {
 
     await tripsAdapter.insertUserTrip([tripInsert]);
 
-    await tripsAdapter.pushUserNotification(tripInsert);
+    await notificationsAdapter.pushUserNotification(tripInsert);
 
     return tripInsert;
+  }
+
+  async checkIfRepeatedTrip(
+    { tripEnd, userId }: ITripInput,
+    tripsAdapter: TripsAdapter,
+  ): Promise<ITripInsert> {
+    const userTrips: ITrip[] = await tripsAdapter.getAllUserTrips(userId);
+
+    const lastTrip: ITripInsert = userTrips[0] as ITripInsert;
+
+    const isRepeatedTrip: boolean = lastTrip.tripEnd === tripEnd;
+
+    if (isRepeatedTrip) {
+      return lastTrip;
+    }
   }
 
   buildTripInserts(tripInput: ITripInput, pricePerMile: number): ITripInsert {
@@ -37,14 +65,27 @@ export class TripService {
 
     const durationISOFormat = `PT${durationInMs / 1000}`;
 
-    const cost: number = pricePerMile * distance;
+    const distanceInMiles: number = distance * 0.621371;
+
+    const cost: number = pricePerMile * distanceInMiles;
 
     const tripInsert: ITripInsert = {
       ...tripInput,
       duration: durationISOFormat,
-      cost,
+      distance,
+      cost: Math.round(cost * 10) / 10,
     };
 
     return tripInsert;
   }
 }
+
+var tripService: TripService;
+
+export const initializeTripService = () => {
+  if (!tripService) {
+    tripService = new TripService();
+  }
+
+  return tripService;
+};
