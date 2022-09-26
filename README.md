@@ -34,7 +34,27 @@ Now that you are completely set up, you should be good to get it running. You ca
 ## **Testing**
 All tests can be run using the command `npm test`.
 
+## Request
+
+
+
 ## **Improvements**
+### **Save a user trip** 
+Endpoint: 
+http://localhost:5000/trips
+
+Body:
+```
+{
+    "userId": 100,
+    "tripStart": "2022-10-11T11:37:00.000Z",
+    "tripEnd": "2022-10-11T12:53:00.000Z",
+    "distance": 85.7
+}
+```
+### **Get all user trips** 
+Endpoint:
+http://localhost:5000/users/:userId/trips
 
 ### **error handling**
 I am very aware this code does follow a happy path, it doesn't answer the questions 
