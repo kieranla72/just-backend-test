@@ -51,6 +51,10 @@ export class TripService {
 
     const lastTrip: ITripInsert = userTrips[0] as ITripInsert;
 
+    if (!lastTrip) {
+      return;
+    }
+
     const isRepeatedTrip: boolean = lastTrip.tripEnd === tripEnd;
 
     if (isRepeatedTrip) {
