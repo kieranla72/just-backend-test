@@ -19,6 +19,7 @@ export class TripService {
     policyAdapter: PolicyAdapter,
     notificationsAdapter: NotificationsAdapter,
   ): Promise<ITripInsert> {
+    // The last user trip is only returned if it is the same as the incoming one
     const lastTrip: ITripInsert = await this.checkIfRepeatedTrip(
       tripInput,
       tripsAdapter,
@@ -63,9 +64,13 @@ export class TripService {
     const durationInMs =
       new Date(tripEnd).getTime() - new Date(tripStart).getTime();
 
-    const durationISOFormat = `PT${durationInMs / 1000}`;
+    const durationInSecs = durationInMs / 1000;
 
-    const distanceInMiles: number = distance * 0.621371;
+    const durationISOFormat = `PT${durationInSecs}`;
+
+    const kilometerConversionToMiles = 0.621371;
+
+    const distanceInMiles: number = distance * kilometerConversionToMiles;
 
     const cost: number = pricePerMile * distanceInMiles;
 

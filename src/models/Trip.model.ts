@@ -2,7 +2,7 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'Trip' })
 export class Trip extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid', { name: 'id' })
+  @PrimaryGeneratedColumn('increment', { name: 'id' })
   id: string;
 
   @Column({ name: 'tripStart' })

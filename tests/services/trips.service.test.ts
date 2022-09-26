@@ -69,6 +69,10 @@ describe('Testing the trips service', () => {
 
       const tripPricePerMile = 15;
 
+      const checkIfRepeatedTripSpy = jest
+        .spyOn(tripService, 'checkIfRepeatedTrip')
+        .mockReturnValueOnce(Promise.resolve(undefined));
+
       const getTripPricePerMileSpy = jest
         .spyOn(policyAdapter, 'getTripPricePerMile')
         .mockReturnValueOnce(Promise.resolve(tripPricePerMile));
@@ -97,6 +101,53 @@ describe('Testing the trips service', () => {
       expect(insertUserTripSpy).toHaveBeenCalledTimes(1);
       expect(pushUserNotificationSpy).toHaveBeenCalledTimes(1);
       expect(buildTripInsertsSpy).toHaveBeenCalledTimes(1);
+      expect(checkIfRepeatedTripSpy).toHaveBeenCalledTimes(1);
+    });
+    it('Should work, the incoming trip already exists in the database so it is not saved and notification is not pushed', async () => {
+      const tripInput: ITripInput = {
+        userId: 1,
+        tripStart: 'tripStart1',
+        tripEnd: 'tripEnd1',
+        distance: 10,
+      };
+
+      const tripInsert: ITripInsert = {
+        ...tripInput,
+        duration: 'PT5370',
+        cost: 117,
+      };
+
+      const checkIfRepeatedTripSpy = jest
+        .spyOn(tripService, 'checkIfRepeatedTrip')
+        .mockReturnValueOnce(Promise.resolve(tripInsert));
+
+      const getTripPricePerMileSpy = jest.spyOn(
+        policyAdapter,
+        'getTripPricePerMile',
+      );
+
+      const insertUserTripSpy = jest.spyOn(tripsAdapter, 'insertUserTrip');
+
+      const pushUserNotificationSpy = jest.spyOn(
+        notificationsAdapter,
+        'pushUserNotification',
+      );
+
+      const buildTripInsertsSpy = jest.spyOn(tripService, 'buildTripInserts');
+
+      const result: ITripInsert = await tripService.createUserTrip(
+        tripInput,
+        tripsAdapter,
+        policyAdapter,
+        notificationsAdapter,
+      );
+
+      expect(result).toEqual(tripInsert);
+      expect(getTripPricePerMileSpy).toHaveBeenCalledTimes(0);
+      expect(insertUserTripSpy).toHaveBeenCalledTimes(0);
+      expect(pushUserNotificationSpy).toHaveBeenCalledTimes(0);
+      expect(buildTripInsertsSpy).toHaveBeenCalledTimes(0);
+      expect(checkIfRepeatedTripSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -123,6 +174,55 @@ describe('Testing the trips service', () => {
       );
 
       expect(result).toEqual(tripInsert);
+    });
+  });
+
+  describe('checkIfRepeatedTrip', () => {
+    it('Should work, last entry in db for user has same trip end timestamp, so last trip returned', async () => {
+      const tripInput: ITripInput = {
+        userId: 1,
+        tripEnd: '2022-09-08T12:40:00.000Z',
+      } as ITripInput;
+
+      const trip: ITrip = {
+        tripEnd: '2022-09-08T12:40:00.000Z',
+        distance: 27,
+        cost: 150,
+      } as ITrip;
+
+      jest
+        .spyOn(tripsAdapter, 'getAllUserTrips')
+        .mockReturnValueOnce(Promise.resolve([trip]));
+
+      const result: ITripInsert = await tripService.checkIfRepeatedTrip(
+        tripInput,
+        tripsAdapter,
+      );
+
+      expect(result).toEqual(trip);
+    });
+    it('Should work, last entry in db for user has different trip end timestamp, so last trip not returned', async () => {
+      const tripInput: ITripInput = {
+        userId: 1,
+        tripEnd: '2022-09-08T12:50:00.000Z',
+      } as ITripInput;
+
+      const trip: ITrip = {
+        tripEnd: '2022-09-08T12:40:00.000Z',
+        distance: 27,
+        cost: 150,
+      } as ITrip;
+
+      jest
+        .spyOn(tripsAdapter, 'getAllUserTrips')
+        .mockReturnValueOnce(Promise.resolve([trip]));
+
+      const result: ITripInsert = await tripService.checkIfRepeatedTrip(
+        tripInput,
+        tripsAdapter,
+      );
+
+      expect(result).toEqual(undefined);
     });
   });
 });

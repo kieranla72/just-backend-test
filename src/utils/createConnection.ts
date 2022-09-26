@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { Trip, User } from '../models';
+import { Trip } from '../models';
 
 // eslint-disable-next-line no-var
 var userTripsConnection: DataSource;
@@ -8,8 +8,8 @@ export const createConnection = async (): Promise<DataSource> => {
   if (!userTripsConnection) {
     userTripsConnection = new DataSource({
       type: 'better-sqlite3',
-      database: '../../../../databases/UserTrips.db',
-      entities: [User, Trip],
+      database: process.env.DB_LOCATION,
+      entities: [Trip],
     });
 
     await userTripsConnection

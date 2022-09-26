@@ -39,8 +39,6 @@ const createUserTrip = async (
   try {
     const tripInput: ITripInput = JSON.parse(req.body);
 
-    console.log(process.env.POLICY_URL);
-
     const tripService: TripService = initializeTripService();
 
     const tripReturn: ITripInsert = await tripService.createUserTrip(
