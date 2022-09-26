@@ -55,6 +55,6 @@ const createUserTrip = async (
 };
 
 tripsRouter.get('/users/:userId/trips', getAllUserTrips);
-tripsRouter.get('/trips', createUserTrip);
+tripsRouter.post('/trips', createUserTrip);
 
 export default tripsRouter;
