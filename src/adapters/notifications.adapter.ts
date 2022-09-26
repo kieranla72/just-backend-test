@@ -4,8 +4,10 @@ import { IPushNotificationData } from './types';
 
 export class NotificationsAdapter {
   async pushUserNotification({ cost, distance }: ITripInsert): Promise<void> {
+    const costInDollars: number = Math.round(cost * 100) / 100;
+
     const title = `Thanks for driving with Just 🚘`;
-    const body = `You have driven for ${distance} miles and it cost you $${cost}`;
+    const body = `You have driven for ${distance} miles and it cost you $${costInDollars}`;
 
     const data: IPushNotificationData = {
       title,

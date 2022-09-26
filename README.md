@@ -1,6 +1,8 @@
 # just-backend-test
 This service is designed to deal with [recording user trips](https://just-insure.slab.com/public/posts/just-backend-exercise-la2d85s9). It does this by attempting to follow a hexagonal architecture and DDD principles as much as possible. It uses sqlite to store all of the trips made.
 
+At the end of each class, you will find a function that uses the singleton pattern which initializes the classes.
+
 ## How to get it running
 ### install 
 Run `npm i` to install all of the service dependencies
@@ -44,6 +46,7 @@ These are all questions I would have thought about more if given more time.
 
 ### External services being down
 I was looking at solving this issue. The way I was going to attempt to do this was to save the trip in the database regardless of whether these services were down. I was going to add another flag called `sentUserNotification`. 
+
 
 This will be given false if the services were down. How I would deal with this would then be to create a timer trigger function which would trigger at regular intervals, sweep up any entries that have yet to be sent to the user, calculate the cost and push the notification to the user.
 ### Hexagonal architecture improvement

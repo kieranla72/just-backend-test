@@ -58,6 +58,7 @@ export class TripService {
     }
   }
 
+  // Construct the inserts required to insert trips into the DB
   buildTripInserts(tripInput: ITripInput, pricePerMile: number): ITripInsert {
     const { tripStart, tripEnd, distance }: ITripInput = tripInput;
 
