@@ -15,8 +15,6 @@ describe('Integration tests for the trips routes', () => {
     it('get - success - Gets all of a user trips', async () => {
       const { body, statusCode } = await request(app).get('/users/100/trips');
 
-      expect(statusCode).toEqual(200);
-
       expect(body).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -28,13 +26,12 @@ describe('Integration tests for the trips routes', () => {
           }),
         ]),
       );
+      expect(statusCode).toEqual(200);
     });
     it('get - failure - invalid format id passed in so errors returned', async () => {
       const { body, statusCode } = await request(app).get(
         '/users/100ads/trips',
       );
-
-      expect(statusCode).toEqual(400);
 
       expect(body).toEqual({
         errors: [
@@ -46,6 +43,7 @@ describe('Integration tests for the trips routes', () => {
           },
         ],
       });
+      expect(statusCode).toEqual(400);
     });
   });
   describe('Integration tests for route /trips', () => {
@@ -60,8 +58,6 @@ describe('Integration tests for the trips routes', () => {
         distance: 85.7,
       });
 
-      expect(statusCode).toEqual(200);
-
       expect(body).toEqual({
         cost: expect.any(Number),
         tripStart: '2022-10-11T11:37:00.000Z',
@@ -69,6 +65,7 @@ describe('Integration tests for the trips routes', () => {
         distance: 85.7,
         duration: expect.any(String),
       });
+      expect(statusCode).toEqual(200);
     });
     it('post - success - Saves repeated save trip request so last saved trip returned', async () => {
       const { body, statusCode } = await request(app).post('/trips').send({
@@ -78,8 +75,6 @@ describe('Integration tests for the trips routes', () => {
         distance: 85.7,
       });
 
-      expect(statusCode).toEqual(200);
-
       expect(body).toEqual({
         cost: expect.any(Number),
         tripStart: '2022-10-11T11:37:00.000Z',
@@ -87,6 +82,7 @@ describe('Integration tests for the trips routes', () => {
         distance: 85.7,
         duration: 'PT4800',
       });
+      expect(statusCode).toEqual(200);
     });
     it('post - failure - Input does not pass validation', async () => {
       const { body, statusCode } = await request(app).post('/trips').send({
@@ -95,8 +91,6 @@ describe('Integration tests for the trips routes', () => {
         tripEnd: '2022-10-11T12:57:00.000Z',
         distance: '85.7sdaf',
       });
-
-      expect(statusCode).toEqual(400);
 
       expect(body).toEqual({
         errors: [
@@ -120,6 +114,7 @@ describe('Integration tests for the trips routes', () => {
           },
         ],
       });
+      expect(statusCode).toEqual(400);
     });
   });
 });
