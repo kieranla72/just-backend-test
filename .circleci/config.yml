@@ -6,8 +6,8 @@ jobs:
     steps:
       - checkout
       - run: npm install --save
-      - run: npm test
       - run: sqlite
+      - run: npm test
       - run:
           name: "Run Jest and Collect Coverage Reports"
           command: jest --collectCoverage=true
