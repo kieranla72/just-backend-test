@@ -15,6 +15,11 @@ describe('Integration tests for the trips routes', () => {
     it('get - success - Gets all of a user trips', async () => {
       const { body, statusCode } = await request(app).get('/users/100/trips');
 
+      console.log('env variables============================\n');
+      console.log(process.env.POLICY_URL);
+      console.log(process.env.PUSH_URL);
+      console.log(process.env.DB_LOCATION);
+
       expect(body).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
