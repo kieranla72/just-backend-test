@@ -48,9 +48,9 @@ describe('Integration tests for the trips routes', () => {
       });
     });
   });
-  describe.only('Integration tests for route /trips', () => {
+  describe('Integration tests for route /trips', () => {
+    jest.setTimeout(10000);
     it('post - success - Saves a new user trip', async () => {
-      jest.setTimeout(10000);
       const tripEnd: string = new Date().toISOString();
 
       const { body, statusCode } = await request(app).post('/trips').send({
@@ -71,8 +71,6 @@ describe('Integration tests for the trips routes', () => {
       });
     });
     it('post - success - Saves repeated save trip request so last saved trip returned', async () => {
-      jest.setTimeout(10000);
-
       const { body, statusCode } = await request(app).post('/trips').send({
         userId: 100,
         tripStart: '2022-10-11T11:37:00.000Z',
@@ -90,9 +88,7 @@ describe('Integration tests for the trips routes', () => {
         duration: 'PT4800',
       });
     });
-    it.only('post - failure - Input does not pass validation', async () => {
-      jest.setTimeout(10000);
-
+    it('post - failure - Input does not pass validation', async () => {
       const { body, statusCode } = await request(app).post('/trips').send({
         userId: '100a',
         tripStart: '2022-10-11T11:37:00.000ZIncorrectFormat',
@@ -105,15 +101,15 @@ describe('Integration tests for the trips routes', () => {
       expect(body).toEqual({
         errors: [
           {
-            value: '100a',
-            msg: 'User id is required to be a numeric integer.',
-            param: 'userId',
-            location: 'body',
-          },
-          {
             value: '2022-10-11T11:37:00.000ZIncorrectFormat',
             msg: 'Trip start timestamp is required to follow ISO formatting.',
             param: 'tripStart',
+            location: 'body',
+          },
+          {
+            value: '100a',
+            msg: 'User id is required to be a numeric integer.',
+            param: 'userId',
             location: 'body',
           },
           {
