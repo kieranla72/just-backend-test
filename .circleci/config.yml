@@ -3,12 +3,17 @@ jobs:
   run_tests:
     docker:
       - image: circleci/node:14
+    environment:
+      DB_LOCATION: $DB_LOCATION
+      PUSH_URL: $PUSH_URL
+      POLICY_URL: $POLICY_URL
     steps:
       - checkout
-      - run: npm install --save
-      - run: npm test
       - run:
-          name: "Run Jest and Collect Coverage Reports"
+          name: "Install dependencies."
+          command: npm install --save
+      - run:
+          name: "Run tests and collect coverage report."
           command: npx jest --collectCoverage=true
       - store_artifacts:
           path: coverage

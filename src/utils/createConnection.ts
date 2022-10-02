@@ -7,7 +7,7 @@ var userTripsConnection: DataSource;
 export const createConnection = async (): Promise<DataSource> => {
   if (!userTripsConnection) {
     userTripsConnection = new DataSource({
-      type: 'sqlite',
+      type: 'better-sqlite3',
       database: process.env.DB_LOCATION,
       entities: [Trip],
     });
