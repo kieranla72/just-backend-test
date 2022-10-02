@@ -1,9 +1,9 @@
-import express from 'express';
+import express, { Express } from 'express';
 import { tripsRouter } from './controllers';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const app = express();
+const app: Express = express();
 
 app.use(express.json());
 

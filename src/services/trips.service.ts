@@ -18,9 +18,9 @@ export class TripService {
     tripsAdapter: TripsAdapter,
     policyAdapter: PolicyAdapter,
     notificationsAdapter: NotificationsAdapter,
-  ): Promise<ITripInsert> {
+  ): Promise<ITrip> {
     // The last user trip is only returned if it is the same as the incoming one
-    const lastTrip: ITripInsert = await this.checkIfRepeatedTrip(
+    const lastTrip: ITrip = await this.checkIfRepeatedTrip(
       tripInput,
       tripsAdapter,
     );
@@ -40,16 +40,34 @@ export class TripService {
 
     await notificationsAdapter.pushUserNotification(tripInsert);
 
-    return tripInsert;
+    const newTrip: ITrip = this.buildNewTrip(tripInsert);
+
+    return newTrip;
+  }
+
+  buildNewTrip({
+    tripStart,
+    tripEnd,
+    distance,
+    duration,
+    cost,
+  }: ITripInsert): ITrip {
+    return {
+      tripStart,
+      tripEnd,
+      distance,
+      duration,
+      cost,
+    };
   }
 
   async checkIfRepeatedTrip(
     { tripEnd, userId }: ITripInput,
     tripsAdapter: TripsAdapter,
-  ): Promise<ITripInsert> {
+  ): Promise<ITrip> {
     const userTrips: ITrip[] = await tripsAdapter.getAllUserTrips(userId);
 
-    const lastTrip: ITripInsert = userTrips[0] as ITripInsert;
+    const lastTrip: ITrip = userTrips[0];
 
     if (!lastTrip) {
       return;

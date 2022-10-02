@@ -30,7 +30,7 @@ const getAllUserTrips = async (
     const errors: Result<ValidationError> = validationResult(req);
 
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors });
+      res.status(400).json(errors);
       return;
     }
 
@@ -42,6 +42,7 @@ const getAllUserTrips = async (
     res.status(200).send(trips);
     return;
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -59,11 +60,11 @@ const createUserTrip = async (
     const errors: Result<ValidationError> = validationResult(req);
 
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors });
+      res.status(400).json(errors);
       return;
     }
 
-    const tripReturn: ITripInsert = await tripService.createUserTrip(
+    const tripReturn: ITrip = await tripService.createUserTrip(
       tripInput,
       initializeTripsAdapter(),
       initializePolicyAdapter(),
@@ -79,15 +80,25 @@ const createUserTrip = async (
 
 tripsRouter.get(
   '/users/:userId/trips',
-  param('userId').isNumeric().toInt(),
+  param('userId', 'User id is required to be a numeric integer.')
+    .isNumeric()
+    .toInt(),
   getAllUserTrips,
 );
 tripsRouter.post(
   '/trips',
-  body('tripStart').isISO8601(),
-  body('tripEnd').isISO8601(),
-  body('userId').isNumeric().toInt(),
-  body('distance').isNumeric().toFloat(),
+  body(
+    'tripStart',
+    'Trip start timestamp is required to follow ISO formatting.',
+  ).isISO8601(),
+  body(
+    'tripEnd',
+    'Trip end timestamp is required to follow ISO formatting.',
+  ).isISO8601(),
+  body('userId', 'User id is required to be a numeric integer.')
+    .isNumeric()
+    .toInt(),
+  body('distance', 'Distance is required to be numeric.').isNumeric().toFloat(),
   createUserTrip,
 );
 
