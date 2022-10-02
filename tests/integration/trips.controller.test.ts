@@ -19,6 +19,7 @@ describe('Integration tests for the trips routes', () => {
       console.log(process.env.POLICY_URL);
       console.log(process.env.PUSH_URL);
       console.log(process.env.DB_LOCATION);
+      console.log(process.env.MY_VARIABLE);
 
       expect(body).toEqual(
         expect.arrayContaining([

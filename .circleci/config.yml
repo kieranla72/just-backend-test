@@ -3,10 +3,6 @@ jobs:
   run_tests:
     docker:
       - image: circleci/node:14
-    environment:
-      DB_LOCATION: $DB_LOCATION
-      PUSH_URL: $PUSH_URL
-      POLICY_URL: $POLICY_URL
     steps:
       - checkout
       - run:
