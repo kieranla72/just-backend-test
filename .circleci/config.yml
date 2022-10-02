@@ -7,6 +7,12 @@ jobs:
       - checkout
       - run: npm install --save
       - run: npm test
+      - run: sqlite
+      - run:
+          name: "Run Jest and Collect Coverage Reports"
+          command: jest --collectCoverage=true
+      - store_artifacts:
+          path: coverage
 workflows:
   build_test:
     jobs:
