@@ -67,6 +67,14 @@ describe('Testing the trips service', () => {
         cost: 117,
       };
 
+      const trip: ITrip = {
+        tripStart: 'tripStart1',
+        tripEnd: 'tripEnd1',
+        distance: 10,
+        duration: 'PT5370',
+        cost: 117,
+      };
+
       const tripPricePerMile = 15;
 
       const checkIfRepeatedTripSpy = jest
@@ -89,14 +97,14 @@ describe('Testing the trips service', () => {
         .spyOn(tripService, 'buildTripInserts')
         .mockReturnValueOnce(tripInsert);
 
-      const result: ITripInsert = await tripService.createUserTrip(
+      const result: ITrip = await tripService.createUserTrip(
         tripInput,
         tripsAdapter,
         policyAdapter,
         notificationsAdapter,
       );
 
-      expect(result).toEqual(tripInsert);
+      expect(result).toEqual(trip);
       expect(getTripPricePerMileSpy).toHaveBeenCalledTimes(1);
       expect(insertUserTripSpy).toHaveBeenCalledTimes(1);
       expect(pushUserNotificationSpy).toHaveBeenCalledTimes(1);
@@ -135,7 +143,7 @@ describe('Testing the trips service', () => {
 
       const buildTripInsertsSpy = jest.spyOn(tripService, 'buildTripInserts');
 
-      const result: ITripInsert = await tripService.createUserTrip(
+      const result: ITrip = await tripService.createUserTrip(
         tripInput,
         tripsAdapter,
         policyAdapter,
@@ -194,7 +202,7 @@ describe('Testing the trips service', () => {
         .spyOn(tripsAdapter, 'getAllUserTrips')
         .mockReturnValueOnce(Promise.resolve([trip]));
 
-      const result: ITripInsert = await tripService.checkIfRepeatedTrip(
+      const result: ITrip = await tripService.checkIfRepeatedTrip(
         tripInput,
         tripsAdapter,
       );
@@ -217,7 +225,7 @@ describe('Testing the trips service', () => {
         .spyOn(tripsAdapter, 'getAllUserTrips')
         .mockReturnValueOnce(Promise.resolve([trip]));
 
-      const result: ITripInsert = await tripService.checkIfRepeatedTrip(
+      const result: ITrip = await tripService.checkIfRepeatedTrip(
         tripInput,
         tripsAdapter,
       );

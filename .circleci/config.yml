@@ -1,0 +1,19 @@
+version: 2.1
+jobs:
+  run_tests:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - run:
+          name: "Install dependencies."
+          command: npm install --save
+      - run:
+          name: "Run tests and collect coverage report."
+          command: npx jest --collectCoverage=true
+      - store_artifacts:
+          path: coverage
+workflows:
+  build_test:
+    jobs:
+      - run_tests
