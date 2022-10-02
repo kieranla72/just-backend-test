@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { ITrip, ITripInput, ITripInsert } from '../services/ports';
+import { ITrip, ITripInput } from '../services/ports';
 import { initializeTripService, TripService } from '../services/trips.service';
 import bodyParser from 'body-parser';
 import { initializeTripsAdapter } from '../adapters/trips.adapter';
