@@ -7,7 +7,7 @@ I heard that this tech test had not been looked at yet, so I decided to spend a 
 - Adding test coverage checks so circleci will reject any builds based on this
 - Moved the database file to within the project to make the review easier
 
-If you would rather look at the test I originally sent in, then feel free to have a look at the branch 'previousMain'. From my point of view I just wanted to try out a couple things mostly around CI and circleci that I haven't had enough exposure to.
+If you would rather look at the test I originally sent in, as it was completed within the original time limit, then feel free to have a look at the branch 'previousMain'. From my point of view I just wanted to try out a couple things mostly around CI and circleci that I haven't had enough exposure to.
 ## **Introduction**
 
 This service is designed to deal with [recording user trips](https://just-insure.slab.com/public/posts/just-backend-exercise-la2d85s9). It does this by attempting to follow a hexagonal architecture and DDD principles as much as possible. It uses sqlite to store all of the trips made.
