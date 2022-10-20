@@ -105,3 +105,6 @@ dist
 
 # vs code 
 .vscode
+
+# azurite 
+__azurite_*.json
